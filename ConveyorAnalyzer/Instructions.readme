@@ -1,5 +1,27 @@
-﻿R e a d m e
------------
+﻿Conveyor Analyzer
+=================
 
-In this file you can include any instructions or other comments you want to have injected onto the 
-top of your final script. You can safely delete this file if you do not want any such comments.
+1. Place a Programable Block on your main construction.
+2 Place an LDC Display.
+3 In the LCD Custom Data enter a configuration like this:
+
+[Conveyor]
+
+; For blocks with multible displays select which to use
+display=0
+
+; Foreground
+color=FF4500
+
+scale=0.5
+
+skip=10
+
+; Skip fully connected
+show_all=false
+
+; Display the construction connected via a Connector with ConnectorNamePart in the name
+via=ConnectorNamePart
+
+[Conveyor_Display0]
+; short form

@@ -40,26 +40,21 @@ namespace IngameScript
             private int WindowSize;         // Number of lines shown on screen at once after heading
             private Color HighlightColor;
             private int linesToSkip;
-            private bool monospace;
             private string Heading = "Conveyor Network";
             private bool MakeSpriteCacheDirty = false;
 
-            bool IncludeFullyConnected = true;
+            bool IncludeFullyConnected;
+            private IMyShipConnector viaConnector;
             private Color BackgroundColor, ForegroundColor;
-            readonly List<List<IMyInventory>> smallPortSegments = new List<List<IMyInventory>>();
-            readonly MyItemType LargeItem = MyItemType.MakeComponent("LargeTube");
-
 
             public DisplayCoordinator(
-                IMyTextSurface surface,
-                float scale = 1.0f,
-                Color highlightColor = new Color(),
-                int linesToSkip = 0, bool monospace = false, bool includeFullyConnected = false)
+                IMyTextSurface surface, float scale = 1.0f, Color highlightColor = new Color(),
+                int linesToSkip = 0, bool includeFullyConnected = false, IMyShipConnector viaConnector = null)
             {
                 this.surface = surface;
                 this.HighlightColor = highlightColor;
                 this.linesToSkip = linesToSkip;
-                this.monospace = monospace;
+                this.viaConnector = viaConnector;
                 this.IncludeFullyConnected = includeFullyConnected;
                 this.BackgroundColor = surface.ScriptBackgroundColor;
                 this.ForegroundColor = surface.ScriptForegroundColor;
@@ -77,14 +72,14 @@ namespace IngameScript
                 surface.Script = "TSS_FactionIcon";
                 Vector2 padding = surface.TextureSize * (surface.TextPadding / 100);
                 viewport = new RectangleF((surface.TextureSize - surface.SurfaceSize) / 2f + padding, surface.SurfaceSize - (2 * padding));
-                WindowSize = ((int)((viewport.Height - 10 * scale) / LineHeight));
+                WindowSize = ((int)((viewport.Height - (linesToSkip>0 ? 0 : HeadingHeight)) / LineHeight))  ;
 
             }
 
 
-            private void AddHeading()
+            private void AddHeading(string message = "")
             {
-                float finalColumnWidth = HeadingFontSize * 80;
+                float finalColumnWidth = HeadingFontSize * 40;
                 // that thing above is rough - this is just used to stop headings colliding, nothing serious,
                 // and is way cheaper than allocating a StringBuilder and measuring the width of the final
                 // column heading text in pixels.
@@ -94,23 +89,29 @@ namespace IngameScript
                     surface.ScriptBackgroundColor = BackgroundColor;
                     surface.ScriptForegroundColor = ForegroundColor;
                 }
-                Position = new Vector2(viewport.Width / 10f, StartHeight) + viewport.Position;
+                Position = new Vector2(viewport.Width / 16f, StartHeight) + viewport.Position;
+                if (linesToSkip > 0)   
+                {
+                    return;
+                }
                 frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXTURE,
                     Data = "Textures\\FactionLogo\\Builders\\BuilderIcon_2.dds",
                     Position = Position + new Vector2(0f, LineHeight / 2f),
                     Size = new Vector2(LineHeight, LineHeight),
-                    RotationOrScale = HeadingFontSize,
+                    RotationOrScale = 0f,
                     Color = HighlightColor,
                     Alignment = TextAlignment.CENTER
                 });
-                Position.X += viewport.Width / 8f;
-                frame.Add(MySprite.CreateClipRect(new Rectangle((int)Position.X, (int)Position.Y, (int)(viewport.Width - Position.X - finalColumnWidth), (int)(Position.Y + HeadingHeight))));
+                Position.X += viewport.Width / 16f;
+                frame.Add(MySprite.CreateClipRect(new Rectangle(
+                    (int)Position.X, (int)Position.Y, 
+                    (int)(viewport.Width - Position.X - finalColumnWidth), (int)(Position.Y + HeadingHeight))));
                 frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXT,
-                    Data = Heading,
+                    Data = $"{Heading} {message}",
                     Position = Position,
                     RotationOrScale = HeadingFontSize,
                     Color = HighlightColor,
@@ -121,6 +122,8 @@ namespace IngameScript
                 Position.Y += HeadingHeight;
 
             }
+            enum ConveyorPortCapacity { none, small, large };
+
             private void DrawConnectionSprite(ConveyorPortCapacity upwardsConnection, ConveyorPortCapacity downwardsConnection)
             {
                 switch (upwardsConnection)
@@ -252,44 +255,93 @@ namespace IngameScript
                 });
             }
 
-            internal void Render(List<List<List<IMyInventory>>> inventoryConveyorGroups)
+            internal void Render(List<Construct> constructs)
             {
+                Construct selectedConstruct = null;
                 frame = surface.DrawFrame();
                 ToggleSpriteCache();
-                if (DEBUG) {
+                if (DEBUG)
+                {
                     DebugConveyorSizes();
                     frame.Dispose();
                     return;
-                } 
-                
-                AddHeading();
-                int renderLineCount = 0;
-                foreach (List<List<IMyInventory>> group in inventoryConveyorGroups)
+                }
+                if (viaConnector != null)
                 {
-                    IMyCubeGrid thisGrid = ((IMyTerminalBlock)group[0][0].Owner).CubeGrid;
-                    MyCubeSize gridSize = thisGrid.GridSizeEnum;
-                    Position.X = viewport.Width / 32f + viewport.Position.X;
-                    DrawGridName(group);
-                    renderLineCount++;
-                    Position.Y += LineHeight;
-                    foreach (var groupInventory in group)
+                    if (viaConnector.Status == MyShipConnectorStatus.Connected)
                     {
-                        FindSmallPortSegments(groupInventory);
-                        for (int segmentIndex = 0; segmentIndex < smallPortSegments.Count; segmentIndex++)
+                        IMyShipConnector connector = viaConnector.OtherConnector;
+                        selectedConstruct = constructs.Find(construct => construct.IsSameConstructAs(connector));
+                        AddHeading($"on {selectedConstruct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName} via {viaConnector.DisplayNameText}");
+                    }
+                    else
+                    {
+                        AddHeading($"Empty Connector '{viaConnector.DisplayNameText}'");
+                        frame.Dispose();
+                        return;
+                    }
+                }
+                else AddHeading();
+
+
+                RenderConstructs(constructs, selectedConstruct);
+                frame.Dispose();
+            }
+
+            private void RenderConstructs(List<Construct> constructs, Construct selectedConstruct)
+            {
+                int renderLineCount = 0;
+                foreach (var construct in constructs)
+                {
+                    if (selectedConstruct != null && selectedConstruct != construct )
+                        continue;
+                    if (renderLineCount > WindowSize + linesToSkip) return;
+                    if (renderLineCount++ > linesToSkip)
+                    {
+                        Position.X = viewport.Width / 32f + viewport.Position.X;
+                        DrawText(construct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName);
+                        Position.Y += LineHeight;
+                    }
+                    renderLineCount = RenderConstruct(renderLineCount, construct);
+                }
+            }
+
+            private int RenderConstruct(int renderLineCount, Construct construct)
+            {
+                if (!IncludeFullyConnected &&
+                    construct.Islands.Count == 1 &&
+                    construct.Islands[0].Segments.Count == 1)
+                {
+                    if (renderLineCount > WindowSize + linesToSkip) return renderLineCount;
+                    if (renderLineCount++ > linesToSkip)
+                    {
+                        Position.X = viewport.Width / 16f + viewport.Position.X;
+                        DrawText("Fully connected");
+                        Position.Y += LineHeight;
+                    }
+                    return renderLineCount;
+                }
+
+                foreach (Island island in construct.Islands)
+                {
+                    for (int segmentIndex = 0; segmentIndex < island.Segments.Count; segmentIndex++)
+                    {
+                        Segment segment = island.Segments[segmentIndex];
+                        for (int blockIndex = 0; blockIndex < segment.Blocks.Count; blockIndex++)
                         {
-                            List<IMyInventory> segment = smallPortSegments[segmentIndex];
-                            for (int inventoryIndex = 0; inventoryIndex < segment.Count; inventoryIndex++)
+                            IMyTerminalBlock block = segment.Blocks[blockIndex];
+                            if (renderLineCount > WindowSize + linesToSkip) return renderLineCount;
+                            if (renderLineCount++ > linesToSkip)
                             {
-                                IMyInventory inv = segment[inventoryIndex];
                                 Position.X = viewport.Width / 16f + viewport.Position.X;
-                                DrawConveyorSize(segmentIndex, segment, inventoryIndex, inv);
-                                renderLineCount++;
+                                DrawConveyorSize(segmentIndex, island.Segments, blockIndex, segment.Blocks);
                                 Position.Y += LineHeight;
                             }
                         }
                     }
                 }
-                frame.Dispose();
+
+                return renderLineCount;
             }
 
             private void DebugConveyorSizes()
@@ -315,10 +367,10 @@ namespace IngameScript
                 }
             }
 
-            private void DrawConveyorSize(int segmentIndex, List<IMyInventory> segment, int inventoryIndex, IMyInventory inv)
+            private void DrawConveyorSize(int segmentIndex, List<Segment> segments, int blockIndex, List<IMyTerminalBlock> blocks)
             {
                 ConveyorPortCapacity upwards, downwards;
-                if (inventoryIndex == 0)
+                if (blockIndex == 0)
                 {
                     if (segmentIndex == 0)
                     {
@@ -328,9 +380,9 @@ namespace IngameScript
                 }
                 else upwards = ConveyorPortCapacity.large;
 
-                if (inventoryIndex == segment.Count - 1)
+                if (blockIndex == blocks.Count - 1)
                 {
-                    if (segmentIndex == smallPortSegments.Count - 1)
+                    if (segmentIndex == segments.Count - 1)
                     {
                         downwards = ConveyorPortCapacity.none;
                     }
@@ -343,7 +395,7 @@ namespace IngameScript
                 {
                     Type = SpriteType.TEXT,
                     Alignment = TextAlignment.LEFT,
-                    Data = ((IMyCubeBlock)inv.Owner).DisplayNameText,
+                    Data = blocks[blockIndex].DisplayNameText,
                     Position = new Vector2(32f, -5f) * RegularFontSize + Position,
                     Color = ForegroundColor,
                     FontId = "DEBUG",
@@ -351,39 +403,13 @@ namespace IngameScript
                 }); // Text
             }
 
-            private void FindSmallPortSegments(List<IMyInventory> groupInventory)
-            {
-                smallPortSegments.Clear();
-                foreach (IMyInventory inv in groupInventory)
-                {
-                    bool found = false;
-                    foreach (List<IMyInventory> segment in smallPortSegments)
-                    {
-                        // Detect large or small port connection
-                        bool hasLargePort = inv.CanTransferItemTo(segment[0], LargeItem);
-                        if (hasLargePort)
-                        {
-                            segment.Add(inv);
-                            IMyCubeBlock block = inv.Owner as IMyCubeBlock;
-
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                    {
-                        smallPortSegments.Add(new List<IMyInventory> { inv });
-                    }
-                }
-            }
-
-            private void DrawGridName(List<List<IMyInventory>> group)
+            private void DrawText(string name)
             {
                 frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXT,
                     Alignment = TextAlignment.LEFT,
-                    Data = ((IMyTerminalBlock)group[0][0].Owner).CubeGrid.DisplayName,
+                    Data = name,
                     Position = new Vector2(32f, -5f) * RegularFontSize + Position,
                     Color = ForegroundColor,
                     FontId = "DEBUG",
