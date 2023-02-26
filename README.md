@@ -1,4 +1,2 @@
-C:\Users\heilt\source\repos\ConveyorAnalyzer\README.md
-
-SE_Conveyors
-
+# SE_Conveyors
+Space Engineers PB script to analyze conveyor network.
