@@ -12,7 +12,7 @@ Installation:
 4. In the control menu select 'Edit* in the PB.
 5. Click Browse scripts in the Edit form (Lower right)
 6. Select the script. (Double click LMB)
-7. Click 'Run* in the PB.
+7. Click 'Run' in the PB.
 8. Build an LCD panel for display.
 9. Add an INI format configuration in the LCD Custom Data.
 
