@@ -42,5 +42,7 @@ via=ConnectorNamePart
 Explanation of the displayed symbols for conveyors:
 ----------------------------------------------------------------------
 Double lined is Large Port Conveyors.
+
 Single lined is Small Port Conveyors.
+
 Missing line is Isolation
