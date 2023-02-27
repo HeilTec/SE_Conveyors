@@ -27,7 +27,7 @@ namespace IngameScript
         // Copied and freely adapted from 
         // https://github.com/Brianetta/SE-All-My-Stuff/blob/main/All%20My%20Stuff/ManagedDisplay.cs
         {
-            private IMyTextSurface surface;
+            private readonly IMyTextSurface surface;
             private RectangleF viewport;
             private MySpriteDrawFrame frame;
             private float StartHeight = 0f;
