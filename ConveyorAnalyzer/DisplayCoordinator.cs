@@ -288,6 +288,14 @@ namespace IngameScript
                 frame.Dispose();
             }
 
+            private int RenderLine(int renderLineCount, Action drawLine)
+            {
+                if (renderLineCount <= WindowSize + linesToSkip
+                    && renderLineCount++ > linesToSkip)
+                    drawLine();
+                return renderLineCount;
+            }
+
             private void RenderConstructs(List<Construct> constructs, Construct selectedConstruct)
             {
                 int renderLineCount = 0;
@@ -296,12 +304,13 @@ namespace IngameScript
                     if (selectedConstruct != null && selectedConstruct != construct )
                         continue;
                     if (renderLineCount > WindowSize + linesToSkip) return;
-                    if (renderLineCount++ > linesToSkip)
+ 
+                    renderLineCount = RenderLine(renderLineCount, () => 
                     {
                         Position.X = viewport.Width / 32f + viewport.Position.X;
                         DrawText(construct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName);
                         Position.Y += LineHeight;
-                    }
+                    });
                     renderLineCount = RenderConstruct(renderLineCount, construct);
                 }
             }
@@ -312,16 +321,18 @@ namespace IngameScript
                     construct.Islands.Count == 1 &&
                     construct.Islands[0].Segments.Count == 1)
                 {
-                    if (renderLineCount > WindowSize + linesToSkip) return renderLineCount;
-                    if (renderLineCount++ > linesToSkip)
+                    return RenderLine(renderLineCount, () => 
                     {
                         Position.X = viewport.Width / 16f + viewport.Position.X;
                         DrawText("Fully connected");
                         Position.Y += LineHeight;
-                    }
-                    return renderLineCount;
+                    });
                 }
+                return RenderIslandsOf(renderLineCount, construct);
+            }
 
+            private int RenderIslandsOf(int renderLineCount, Construct construct)
+            {
                 foreach (Island island in construct.Islands)
                 {
                     for (int segmentIndex = 0; segmentIndex < island.Segments.Count; segmentIndex++)
@@ -330,17 +341,17 @@ namespace IngameScript
                         for (int blockIndex = 0; blockIndex < segment.Blocks.Count; blockIndex++)
                         {
                             IMyTerminalBlock block = segment.Blocks[blockIndex];
-                            if (renderLineCount > WindowSize + linesToSkip) return renderLineCount;
-                            if (renderLineCount++ > linesToSkip)
+                            if (renderLineCount > WindowSize + linesToSkip) break; 
+
+                            renderLineCount = RenderLine(renderLineCount, ()=> 
                             {
                                 Position.X = viewport.Width / 16f + viewport.Position.X;
                                 DrawConveyorSize(segmentIndex, island.Segments, blockIndex, segment.Blocks);
                                 Position.Y += LineHeight;
-                            }
+                            });
                         }
                     }
                 }
-
                 return renderLineCount;
             }
 
