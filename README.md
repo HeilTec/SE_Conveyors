@@ -6,9 +6,9 @@ Lists Inventory blocks and their conveyor connections.
 ### Installation:
 
 1. To use Scripts you need to enable Experimental mode
-2. Subscribe to the script.
+2. Subscribe to the [script](https://steamcommunity.com/sharedfiles/filedetails/?id=2939076864).
 3. Build a Programmable block (PB).
-4. In the control menu select 'Edit* in the PB.
+4. In the control menu select 'Edit' in the PB.
 5. Click Browse scripts in the Edit form (Lower right)
 6. Select the script. (Double click LMB)
 7. Click 'Run' in the PB.
@@ -51,3 +51,5 @@ via=ConnectorNamePart
 ![Single](single.png) Single lined is Small Port Conveyors.
 
 Missing line is Isolation
+
+
