@@ -40,6 +40,9 @@ via=ConnectorNamePart
 `
 ```
 
+### Example output
+
+![Test Grid Output](TestGridOutput.png)
 #### Explanation of the displayed symbols for conveyors:
 
 ![Double](double.png) Double lined is Large Port Conveyors.
@@ -48,7 +51,3 @@ via=ConnectorNamePart
 ![Single](single.png) Single lined is Small Port Conveyors.
 
 Missing line is Isolation
-
-### Example output
-
-![Test Grid Output](TestGridOutput.png)
