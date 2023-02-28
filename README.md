@@ -3,8 +3,7 @@ Space Engineers PB script to analyze conveyor network.
 
 Lists Inventory blocks and their conveyor connections.
 
-Installation:
----------------
+### Installation:
 
 1. To use Scripts you need to enable Experimental mode
 2. Subscribe to the script.
@@ -16,7 +15,8 @@ Installation:
 8. Build an LCD panel for display.
 9. Add an INI format configuration in the LCD Custom Data.
 
-`
+
+```ini
 [Conveyor]
 
 ; For blocks with multible displays select which to use
@@ -38,11 +38,17 @@ via=ConnectorNamePart
 [Conveyor_Display0]
 ; short form
 `
+```
 
-Explanation of the displayed symbols for conveyors:
-----------------------------------------------------------------------
-Double lined is Large Port Conveyors.
+#### Explanation of the displayed symbols for conveyors:
 
-Single lined is Small Port Conveyors.
+![Double](double.png) Double lined is Large Port Conveyors.
+
+
+![Single](single.png) Single lined is Small Port Conveyors.
 
 Missing line is Isolation
+
+### Example output
+
+![Test Grid Output](TestGridOutput.png)
