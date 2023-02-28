@@ -15,7 +15,7 @@ Lists Inventory blocks and their conveyor connections.
 8. Build an LCD panel for display.
 9. Add an INI format configuration in the LCD Custom Data.
 
-
+#### LCD Custom Data
 ```ini
 [Conveyor]
 

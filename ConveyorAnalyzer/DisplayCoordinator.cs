@@ -290,8 +290,8 @@ namespace IngameScript
 
             private int RenderLine(int renderLineCount, Action drawLine)
             {
-                if (renderLineCount <= WindowSize + linesToSkip
-                    && renderLineCount++ > linesToSkip)
+                if (renderLineCount < WindowSize + linesToSkip
+                    && ++renderLineCount > linesToSkip)
                     drawLine();
                 return renderLineCount;
             }
@@ -303,7 +303,7 @@ namespace IngameScript
                 {
                     if (selectedConstruct != null && selectedConstruct != construct )
                         continue;
-                    if (renderLineCount > WindowSize + linesToSkip) return;
+                    if (renderLineCount >= WindowSize + linesToSkip) return;
  
                     renderLineCount = RenderLine(renderLineCount, () => 
                     {
@@ -341,7 +341,7 @@ namespace IngameScript
                         for (int blockIndex = 0; blockIndex < segment.Blocks.Count; blockIndex++)
                         {
                             IMyTerminalBlock block = segment.Blocks[blockIndex];
-                            if (renderLineCount > WindowSize + linesToSkip) break; 
+                            if (renderLineCount >= WindowSize + linesToSkip) break; 
 
                             renderLineCount = RenderLine(renderLineCount, ()=> 
                             {

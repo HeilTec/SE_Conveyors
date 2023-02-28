@@ -65,10 +65,15 @@ namespace IngameScript
         {
             if ((updateSource & UpdateType.Update100) != 0)
             {
+                var start = this.Runtime.CurrentInstructionCount;
                 ScanGrid();
+                Echo($"{ this.Runtime.CurrentInstructionCount} instructions after ScanGrid");
                 FindConstructions();
+                Echo($"{ this.Runtime.CurrentInstructionCount} instructions after FindConstructions");
                 ShowConnectionsAsText();
+                Echo($"{ this.Runtime.CurrentInstructionCount} instructions after Text display");
                 ShowConnectionsWithSprites();
+                Echo($"{ this.Runtime.CurrentInstructionCount} instructions after Strite display");
             }
         }
 
