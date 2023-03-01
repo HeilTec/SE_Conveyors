@@ -77,18 +77,19 @@ namespace IngameScript
                 _totalSegments = 0;
                 _echoText.AppendLine($"{SCRIPT_NAME} {SCRIPT_VERSION}");
                 ScanGrid();
-                _echoText.AppendLine($"{ this.Runtime.CurrentInstructionCount} instructions after ScanGrid");
+                _echoText.AppendLine($"{ Runtime.CurrentInstructionCount} instructions after ScanGrid");
                 _echoText.AppendLine($"{_allInventoryBlocks.Count} Inventory Blocks");
                 FindConstructions();
-                _echoText.AppendLine($"{ this.Runtime.CurrentInstructionCount} instructions after FindConstructions");
+                _echoText.AppendLine($"{ Runtime.CurrentInstructionCount} instructions after FindConstructions");
                 _echoText.AppendLine($"{_constructs.Count} Constructs");
                 _echoText.AppendLine($"{_totalIslands} Islands");
                 _echoText.AppendLine($"{_totalSegments} Segments");
                 ShowConnectionsAsText();
-                _echoText.AppendLine($"{ this.Runtime.CurrentInstructionCount} instructions after Text display");
+                _echoText.AppendLine($"{ Runtime.CurrentInstructionCount} instructions after Text display");
                 ShowConnectionsWithSprites();
-                _echoText.AppendLine($"{ this.Runtime.CurrentInstructionCount} instructions after Sprite display");
-                _echoText.AppendLine($"Last Run Time = { this.Runtime.LastRunTimeMs} ms");
+                _echoText.AppendLine($"{ Runtime.CurrentInstructionCount} instructions after Sprite display");
+                Me.CustomData = $"{Me.CustomData}\n{ Runtime.LastRunTimeMs} ms";
+                _echoText.AppendLine($"Last Run Time = { Runtime.LastRunTimeMs} ms");
                 Echo(_echoText.ToString());
             }
         }
