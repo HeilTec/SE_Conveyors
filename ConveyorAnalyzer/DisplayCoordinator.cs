@@ -27,99 +27,98 @@ namespace IngameScript
         // Copied and freely adapted from 
         // https://github.com/Brianetta/SE-All-My-Stuff/blob/main/All%20My%20Stuff/ManagedDisplay.cs
         {
-            private IMyTextSurface surface;
-            private RectangleF viewport;
-            private MySpriteDrawFrame frame;
-            private float StartHeight = 0f;
-            private float HeadingHeight = 35f;
-            private float LineHeight = 24f;
-            private float HeadingFontSize = 1.3f;
-            private float RegularFontSize = 1.0f;
-            private float SpriteScale = 1.0f;
-            private Vector2 Position;
-            private int WindowSize;         // Number of lines shown on screen at once after heading
-            private Color HighlightColor;
-            private int linesToSkip;
-            private string Heading = "Conveyor Network";
-            private bool MakeSpriteCacheDirty = false;
-
-            bool IncludeFullyConnected;
-            private IMyShipConnector viaConnector;
-            private Color BackgroundColor, ForegroundColor;
+            private readonly string _heading = "Conveyor Network";
+            private MySpriteDrawFrame _frame;
+            private Vector2 _position;
+            private bool _makeSpriteCacheDirty = false;
+            private readonly IMyTextSurface _surface;
+            private readonly RectangleF _viewport;
+            private readonly float _startHeight = 0f;
+            private readonly float _headingHeight = 35f;
+            private readonly float _lineHeight = 24f;
+            private readonly float _headingFontSize = 1.3f;
+            private readonly float _regularFontSize = 1.0f;
+            private readonly float _spriteScale = 1.0f;
+            private readonly int _windowSize;         // Number of lines shown on screen at once after heading
+            private readonly Color _highlightColor;
+            private readonly int _linesToSkip;
+            private readonly bool _includeFullyConnected;
+            private readonly IMyShipConnector _viaConnector;
+            private readonly Color _backgroundColor, _foregroundColor;
 
             public DisplayCoordinator(
                 IMyTextSurface surface, float scale = 1.0f, Color highlightColor = new Color(),
                 int linesToSkip = 0, bool includeFullyConnected = false, IMyShipConnector viaConnector = null)
             {
-                this.surface = surface;
-                this.HighlightColor = highlightColor;
-                this.linesToSkip = linesToSkip;
-                this.viaConnector = viaConnector;
-                this.IncludeFullyConnected = includeFullyConnected;
-                this.BackgroundColor = surface.ScriptBackgroundColor;
-                this.ForegroundColor = surface.ScriptForegroundColor;
+                this._surface = surface;
+                this._highlightColor = highlightColor;
+                this._linesToSkip = linesToSkip;
+                this._viaConnector = viaConnector;
+                this._includeFullyConnected = includeFullyConnected;
+                this._backgroundColor = surface.ScriptBackgroundColor;
+                this._foregroundColor = surface.ScriptForegroundColor;
 
                 // Scale everything!
-                StartHeight *= scale;
-                HeadingHeight *= scale;
-                LineHeight *= scale;
-                HeadingFontSize *= scale;
-                RegularFontSize *= scale;
-                SpriteScale *= scale;
+                _startHeight *= scale;
+                _headingHeight *= scale;
+                _lineHeight *= scale;
+                _headingFontSize *= scale;
+                _regularFontSize *= scale;
+                _spriteScale *= scale;
 
 
                 surface.ContentType = ContentType.SCRIPT;
                 surface.Script = "TSS_FactionIcon";
                 Vector2 padding = surface.TextureSize * (surface.TextPadding / 100);
-                viewport = new RectangleF((surface.TextureSize - surface.SurfaceSize) / 2f + padding, surface.SurfaceSize - (2 * padding));
-                WindowSize = ((int)((viewport.Height - (linesToSkip>0 ? 0 : HeadingHeight)) / LineHeight))  ;
+                _viewport = new RectangleF((surface.TextureSize - surface.SurfaceSize) / 2f + padding, surface.SurfaceSize - (2 * padding));
+                _windowSize = ((int)((_viewport.Height - (linesToSkip>0 ? 0 : _headingHeight)) / _lineHeight))  ;
 
             }
 
 
             private void AddHeading(string message = "")
             {
-                float finalColumnWidth = HeadingFontSize * 40;
+                float finalColumnWidth = _headingFontSize * 40;
                 // that thing above is rough - this is just used to stop headings colliding, nothing serious,
                 // and is way cheaper than allocating a StringBuilder and measuring the width of the final
                 // column heading text in pixels.
-                if (surface.Script != "")
+                if (_surface.Script != "")
                 {
-                    surface.Script = "";
-                    surface.ScriptBackgroundColor = BackgroundColor;
-                    surface.ScriptForegroundColor = ForegroundColor;
+                    _surface.Script = "";
+                    _surface.ScriptBackgroundColor = _backgroundColor;
+                    _surface.ScriptForegroundColor = _foregroundColor;
                 }
-                Position = new Vector2(viewport.Width / 16f, StartHeight) + viewport.Position;
-                if (linesToSkip > 0)   
+                _position = new Vector2(_viewport.Width / 16f, _startHeight) + _viewport.Position;
+                if (_linesToSkip > 0)   
                 {
                     return;
                 }
-                frame.Add(new MySprite()
+                _frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXTURE,
                     Data = "Textures\\FactionLogo\\Builders\\BuilderIcon_2.dds",
-                    Position = Position + new Vector2(0f, LineHeight / 2f),
-                    Size = new Vector2(LineHeight, LineHeight),
+                    Position = _position + new Vector2(0f, _lineHeight / 2f),
+                    Size = new Vector2(_lineHeight, _lineHeight),
                     RotationOrScale = 0f,
-                    Color = HighlightColor,
+                    Color = _highlightColor,
                     Alignment = TextAlignment.CENTER
                 });
-                Position.X += viewport.Width / 16f;
-                frame.Add(MySprite.CreateClipRect(new Rectangle(
-                    (int)Position.X, (int)Position.Y, 
-                    (int)(viewport.Width - Position.X - finalColumnWidth), (int)(Position.Y + HeadingHeight))));
-                frame.Add(new MySprite()
+                _position.X += _viewport.Width / 16f;
+                _frame.Add(MySprite.CreateClipRect(new Rectangle(
+                    (int)_position.X, (int)_position.Y, 
+                    (int)(_viewport.Width - _position.X - finalColumnWidth), (int)(_position.Y + _headingHeight))));
+                _frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXT,
-                    Data = $"{Heading} {message}",
-                    Position = Position,
-                    RotationOrScale = HeadingFontSize,
-                    Color = HighlightColor,
+                    Data = $"{_heading} {message}",
+                    Position = _position,
+                    RotationOrScale = _headingFontSize,
+                    Color = _highlightColor,
                     Alignment = TextAlignment.LEFT,
                     FontId = "White"
                 });
-                frame.Add(MySprite.CreateClearClipRect());
-                Position.Y += HeadingHeight;
+                _frame.Add(MySprite.CreateClearClipRect());
+                _position.Y += _headingHeight;
 
             }
             enum ConveyorPortCapacity { none, small, large };
@@ -243,14 +242,14 @@ namespace IngameScript
 
             private void DrawRectangleAt(float x0, float y0, float x1, float y1)
             {
-                frame.Add(new MySprite()
+                _frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXTURE,
                     Alignment = TextAlignment.CENTER,
                     Data = "SquareSimple",
-                    Position = new Vector2(x0, y0) * SpriteScale + Position,
-                    Size = new Vector2(x1, y1) * SpriteScale,
-                    Color = ForegroundColor,
+                    Position = new Vector2(x0, y0) * _spriteScale + _position,
+                    Size = new Vector2(x1, y1) * _spriteScale,
+                    Color = _foregroundColor,
                     RotationOrScale = 0f
                 });
             }
@@ -258,26 +257,26 @@ namespace IngameScript
             internal void Render(List<Construct> constructs)
             {
                 Construct selectedConstruct = null;
-                frame = surface.DrawFrame();
+                _frame = _surface.DrawFrame();
                 ToggleSpriteCache();
                 if (DEBUG)
                 {
                     DebugConveyorSizes();
-                    frame.Dispose();
+                    _frame.Dispose();
                     return;
                 }
-                if (viaConnector != null)
+                if (_viaConnector != null)
                 {
-                    if (viaConnector.Status == MyShipConnectorStatus.Connected)
+                    if (_viaConnector.Status == MyShipConnectorStatus.Connected)
                     {
-                        IMyShipConnector connector = viaConnector.OtherConnector;
+                        IMyShipConnector connector = _viaConnector.OtherConnector;
                         selectedConstruct = constructs.Find(construct => construct.IsSameConstructAs(connector));
-                        AddHeading($"on {selectedConstruct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName} via {viaConnector.DisplayNameText}");
+                        AddHeading($"on {selectedConstruct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName} via {_viaConnector.DisplayNameText}");
                     }
                     else
                     {
-                        AddHeading($"Empty Connector '{viaConnector.DisplayNameText}'");
-                        frame.Dispose();
+                        AddHeading($"Empty Connector '{_viaConnector.DisplayNameText}'");
+                        _frame.Dispose();
                         return;
                     }
                 }
@@ -285,13 +284,13 @@ namespace IngameScript
 
 
                 RenderConstructs(constructs, selectedConstruct);
-                frame.Dispose();
+                _frame.Dispose();
             }
 
             private int RenderLine(int renderLineCount, Action drawLine)
             {
-                if (renderLineCount < WindowSize + linesToSkip
-                    && ++renderLineCount > linesToSkip)
+                if (renderLineCount < _windowSize + _linesToSkip
+                    && ++renderLineCount > _linesToSkip)
                     drawLine();
                 return renderLineCount;
             }
@@ -303,13 +302,13 @@ namespace IngameScript
                 {
                     if (selectedConstruct != null && selectedConstruct != construct )
                         continue;
-                    if (renderLineCount >= WindowSize + linesToSkip) return;
+                    if (renderLineCount >= _windowSize + _linesToSkip) return;
  
                     renderLineCount = RenderLine(renderLineCount, () => 
                     {
-                        Position.X = viewport.Width / 32f + viewport.Position.X;
+                        _position.X = _viewport.Width / 32f + _viewport.Position.X;
                         DrawText(construct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName);
-                        Position.Y += LineHeight;
+                        _position.Y += _lineHeight;
                     });
                     renderLineCount = RenderConstruct(renderLineCount, construct);
                 }
@@ -317,15 +316,15 @@ namespace IngameScript
 
             private int RenderConstruct(int renderLineCount, Construct construct)
             {
-                if (!IncludeFullyConnected &&
+                if (!_includeFullyConnected &&
                     construct.Islands.Count == 1 &&
                     construct.Islands[0].Segments.Count == 1)
                 {
                     return RenderLine(renderLineCount, () => 
                     {
-                        Position.X = viewport.Width / 16f + viewport.Position.X;
+                        _position.X = _viewport.Width / 16f + _viewport.Position.X;
                         DrawText("Fully connected");
-                        Position.Y += LineHeight;
+                        _position.Y += _lineHeight;
                     });
                 }
                 return RenderIslandsOf(renderLineCount, construct);
@@ -341,13 +340,13 @@ namespace IngameScript
                         for (int blockIndex = 0; blockIndex < segment.Blocks.Count; blockIndex++)
                         {
                             IMyTerminalBlock block = segment.Blocks[blockIndex];
-                            if (renderLineCount >= WindowSize + linesToSkip) break; 
+                            if (renderLineCount >= _windowSize + _linesToSkip) break; 
 
                             renderLineCount = RenderLine(renderLineCount, ()=> 
                             {
-                                Position.X = viewport.Width / 16f + viewport.Position.X;
+                                _position.X = _viewport.Width / 16f + _viewport.Position.X;
                                 DrawConveyorSize(segmentIndex, island.Segments, blockIndex, segment.Blocks);
-                                Position.Y += LineHeight;
+                                _position.Y += _lineHeight;
                             });
                         }
                     }
@@ -361,19 +360,19 @@ namespace IngameScript
                 {
                     for (var downwards = ConveyorPortCapacity.none; downwards <= ConveyorPortCapacity.large; downwards++)
                     {
-                        Position.X = viewport.Width / 16f + viewport.Position.X;
+                        _position.X = _viewport.Width / 16f + _viewport.Position.X;
                         DrawConnectionSprite(upwards, downwards);
-                        frame.Add(new MySprite()
+                        _frame.Add(new MySprite()
                         {
                             Type = SpriteType.TEXT,
                             Alignment = TextAlignment.LEFT,
                             Data = upwards.ToString() + ' '+ downwards.ToString(), 
-                            Position = new Vector2(32f, -5f) * RegularFontSize + Position,
-                            Color = ForegroundColor,
+                            Position = new Vector2(32f, -5f) * _regularFontSize + _position,
+                            Color = _foregroundColor,
                             FontId = "DEBUG",
-                            RotationOrScale = RegularFontSize,
+                            RotationOrScale = _regularFontSize,
                         }); // Text
-                        Position.Y += LineHeight;
+                        _position.Y += _lineHeight;
                     }
                 }
             }
@@ -402,42 +401,42 @@ namespace IngameScript
                 else downwards = ConveyorPortCapacity.large;
 
                 DrawConnectionSprite(upwards, downwards);
-                frame.Add(new MySprite()
+                _frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXT,
                     Alignment = TextAlignment.LEFT,
                     Data = blocks[blockIndex].DisplayNameText,
-                    Position = new Vector2(32f, -5f) * RegularFontSize + Position,
-                    Color = ForegroundColor,
+                    Position = new Vector2(32f, -5f) * _regularFontSize + _position,
+                    Color = _foregroundColor,
                     FontId = "DEBUG",
-                    RotationOrScale = RegularFontSize,
+                    RotationOrScale = _regularFontSize,
                 }); // Text
             }
 
-            private void DrawText(string name)
+            private void DrawText(string text)
             {
-                frame.Add(new MySprite()
+                _frame.Add(new MySprite()
                 {
                     Type = SpriteType.TEXT,
                     Alignment = TextAlignment.LEFT,
-                    Data = name,
-                    Position = new Vector2(32f, -5f) * RegularFontSize + Position,
-                    Color = ForegroundColor,
+                    Data = text,
+                    Position = new Vector2(32f, -5f) * _regularFontSize + _position,
+                    Color = _foregroundColor,
                     FontId = "DEBUG",
-                    RotationOrScale = RegularFontSize,
+                    RotationOrScale = _regularFontSize,
                 }); // Text
             }
 
             private void ToggleSpriteCache()
             {
-                MakeSpriteCacheDirty = !MakeSpriteCacheDirty;
-                if (MakeSpriteCacheDirty)
+                _makeSpriteCacheDirty = !_makeSpriteCacheDirty;
+                if (_makeSpriteCacheDirty)
                 {
-                    frame.Add(new MySprite()
+                    _frame.Add(new MySprite()
                     {
                         Type = SpriteType.TEXTURE,
                         Data = "SquareSimple",
-                        Color = surface.BackgroundColor,
+                        Color = _surface.BackgroundColor,
                         Position = new Vector2(0, 0),
                         Size = new Vector2(0, 0)
                     });
