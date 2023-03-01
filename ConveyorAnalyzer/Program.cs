@@ -88,6 +88,7 @@ namespace IngameScript
                 _echoText.AppendLine($"{ this.Runtime.CurrentInstructionCount} instructions after Text display");
                 ShowConnectionsWithSprites();
                 _echoText.AppendLine($"{ this.Runtime.CurrentInstructionCount} instructions after Sprite display");
+                _echoText.AppendLine($"Last Run Time = { this.Runtime.LastRunTimeMs} ms");
                 Echo(_echoText.ToString());
             }
         }
