@@ -68,7 +68,7 @@ namespace IngameScript
 
 
                 surface.ContentType = ContentType.SCRIPT;
-                surface.Script = "TSS_FactionIcon";
+                // surface.Script = "TSS_FactionIcon";
                 Vector2 padding = surface.TextureSize * (surface.TextPadding / 100);
                 _viewport = new RectangleF((surface.TextureSize - surface.SurfaceSize) / 2f + padding, surface.SurfaceSize - (2 * padding));
                 _windowSize = ((int)((_viewport.Height - (linesToSkip>0 ? 0 : _headingHeight)) / _lineHeight))  ;
@@ -271,7 +271,7 @@ namespace IngameScript
                     {
                         IMyShipConnector connector = _viaConnector.OtherConnector;
                         selectedConstruct = constructs.Find(construct => construct.IsSameConstructAs(connector));
-                        AddHeading($"on {selectedConstruct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName} via {_viaConnector.DisplayNameText}");
+                        AddHeading($"via {_viaConnector.DisplayNameText}");
                     }
                     else
                     {
@@ -300,14 +300,16 @@ namespace IngameScript
                 int renderLineCount = 0;
                 foreach (var construct in constructs)
                 {
-                    if (selectedConstruct != null && selectedConstruct != construct )
+                    if (construct.referenceBlock.Closed ||
+                            selectedConstruct != null && 
+                            selectedConstruct != construct )
                         continue;
                     if (renderLineCount >= _windowSize + _linesToSkip) return;
  
                     renderLineCount = RenderLine(renderLineCount, () => 
                     {
                         _position.X = _viewport.Width / 32f + _viewport.Position.X;
-                        DrawText(construct.Islands[0].Segments[0].Blocks[0].CubeGrid.DisplayName);
+                        DrawText(construct.referenceBlock.CubeGrid.DisplayName);
                         _position.Y += _lineHeight;
                     });
                     renderLineCount = RenderConstruct(renderLineCount, construct);
@@ -334,13 +336,14 @@ namespace IngameScript
             {
                 foreach (Island island in construct.Islands)
                 {
+                    if (island.referenceBlock.Closed) continue;
                     for (int segmentIndex = 0; segmentIndex < island.Segments.Count; segmentIndex++)
                     {
                         Segment segment = island.Segments[segmentIndex];
                         for (int blockIndex = 0; blockIndex < segment.Blocks.Count; blockIndex++)
                         {
                             IMyTerminalBlock block = segment.Blocks[blockIndex];
-                            if (renderLineCount >= _windowSize + _linesToSkip) break; 
+                            if (renderLineCount >= _windowSize + _linesToSkip || block.Closed) break; 
 
                             renderLineCount = RenderLine(renderLineCount, ()=> 
                             {
