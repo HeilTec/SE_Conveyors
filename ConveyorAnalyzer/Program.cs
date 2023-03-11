@@ -41,7 +41,7 @@ namespace IngameScript
         private readonly StringBuilder _sectionCandidateName = new StringBuilder();
         private readonly List<string> _sectionNames = new List<string>();
         private readonly MyIni _ini = new MyIni();
-        private readonly List<DisplayCoordinator> _screens = new List<DisplayCoordinator>();
+        private readonly List<InventoryAnalysisDisplay> _screens = new List<InventoryAnalysisDisplay>();
         private readonly List<IMyTerminalBlock> _providers = new List<IMyTerminalBlock>();
         private readonly List<IMyTextPanel> _taggedLCDs = new List<IMyTextPanel>();
         private readonly List<IMyTextPanel> _runtimeLCDs = new List<IMyTextPanel>();
@@ -265,7 +265,7 @@ namespace IngameScript
                 if (viaConnector == null) _echoText.AppendLine($"** WARNING ** '{connectorName}' not found. Full list displayed.");
             }
 
-            _screens.Add(new DisplayCoordinator(
+            _screens.Add(new InventoryAnalysisDisplay(
                 display, scale, color, linesToSkip, showAll, viaConnector));
         }
 
@@ -528,7 +528,7 @@ namespace IngameScript
 
         private void ShowConnectionsWithSprites()
         {
-            foreach (DisplayCoordinator display in _screens)
+            foreach (InventoryAnalysisDisplay display in _screens)
             {
                 display.Render(_constructs);
             }

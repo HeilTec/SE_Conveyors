@@ -23,7 +23,7 @@ namespace IngameScript
     partial class Program
     {
         readonly static bool DEBUG = false;
-        public class DisplayCoordinator
+        public class InventoryAnalysisDisplay
         // Copied and freely adapted from 
         // https://github.com/Brianetta/SE-All-My-Stuff/blob/main/All%20My%20Stuff/ManagedDisplay.cs
         {
@@ -46,7 +46,7 @@ namespace IngameScript
             private readonly IMyShipConnector _viaConnector;
             private readonly Color _backgroundColor, _foregroundColor;
 
-            public DisplayCoordinator(
+            public InventoryAnalysisDisplay(
                 IMyTextSurface surface, float scale = 1.0f, Color highlightColor = new Color(),
                 int linesToSkip = 0, bool includeFullyConnected = false, IMyShipConnector viaConnector = null)
             {
