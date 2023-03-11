@@ -1,0 +1,102 @@
+List of constructions:
+---------------------
+
+Grid: Large Grid 777
+    ||  Connector
+    ||  BG - Small Separate Cargo Container
+    ||  Connector 4 - Service Port 1
+     |  
+
+    ||  BG - Small Cargo Container
+    ||  BG - Small Reactor
+    ||  BG - Connector 3
+    ||  BG - Connector 1
+    ||  Artillery
+     |  
+
+
+Grid: Hydra
+    ||  Small Cargo Container 15
+     |  
+    ||  Small Cargo Container 14
+     |  
+    ||  Small Cargo Container 13
+     |  
+    ||  Small Cargo Container 12
+     |  
+    ||  Small Cargo Container 11
+     |  
+    ||  Small Cargo Container 10
+     |  
+    ||  Small Cargo Container 9
+     |  
+    ||  Small Cargo Container 8
+     |  
+    ||  Small Cargo Container 7
+     |  
+    ||  Hydra - Connector
+     |  
+    ||  Hydra - Fighter Cockpit
+    ||  Hydra - O2/H2 Generator
+     |  
+    ||  Hydra - Oxygen Tank
+    ||  Hydra - Hydrogen Tank
+     |  
+    ||  Hydra - Assault Cannon 1
+     |  
+    ||  Hydra - Assault Cannon 2
+     |  
+    ||  Gatling Gun 4
+     |  
+    ||  Gatling Gun 3
+     |  
+    ||  Small Cargo Container 17
+     |  
+    ||  Small Cargo Container 2
+     |  
+    ||  Small Cargo Container
+     |  
+    ||  Small Cargo Container 6
+     |  
+    ||  Small Cargo Container 5
+     |  
+    ||  Small Cargo Container 4
+     |  
+    ||  Small Cargo Container 3
+     |  
+    ||  Small Cargo Container 16
+     |  
+    ||  Small Cargo Container 18
+     |  
+
+
+Grid: Connected Large Grid
+    ||  LG - Connector 2
+    ||  LG - Small Cargo Container
+    ||  Small Reactor
+    ||  Small Cargo Container 2
+    ||  Small Cargo Container
+    ||  Small Cargo Container 3
+    ||  Small Cargo Container
+    ||  Small Cargo Container 2
+    ||  Small Cargo Container 3
+    ||  Small Cargo Container 4
+    ||  Small Cargo Container
+    ||  Small Cargo Container 5
+    ||  O2/H2 Generator
+    ||  O2/H2 Generator 2
+    ||  Assembler
+    ||  Assembler 2
+    ||  Assembler 3
+    ||  Assembler 5
+    ||  Small Cargo Container 4
+    ||  Large Cargo Container
+    ||  Industrial Refinery
+    ||  Industrial Refinery 2
+    ||  Industrial Refinery 3
+    ||  Industrial Refinery 4
+    ||  Industrial Assembler
+    ||  Industrial Assembler 2
+     |  
+
+

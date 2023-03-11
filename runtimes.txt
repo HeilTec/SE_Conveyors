@@ -1,0 +1,310 @@
+Runtime Statistics:
+(Re)Compile0
+Update100 - 2.343
+(Re)Compile - 4.5478
+Idle step - 0.068
+(Re)Start - 0.5764
+CollectBlocks - 3.1621
+FindConstructions - 12.3589
+ParseScreensINI - 8.0391
+ShowConnectionsAsText - 2.6503
+ShowConnectionsWithSprites - 18.8081
+Main Sequence Done - 0.0172
+Main Sequence Done - 1.3088
+Update100 - 0.076
+Main Sequence Done - 0.0141
+Idle step - 0.0145
+(Re)Start - 0.0198
+CollectBlocks - 0.1943
+FindConstructions - 2.3076
+ParseScreensINI - 0.1255
+ShowConnectionsAsText - 0.0559
+ShowConnectionsWithSprites - 0.222
+Main Sequence Done - 0.0141
+Main Sequence Done - 0.0269
+Update100 - 0.0497
+Main Sequence Done - 0.014
+Idle step - 0.0137
+(Re)Start - 0.0153
+CollectBlocks - 0.0904
+FindConstructions - 2.2404
+ParseScreensINI - 0.1244
+ShowConnectionsAsText - 0.0497
+ShowConnectionsWithSprites - 0.1998
+Main Sequence Done - 0.0145
+Main Sequence Done - 0.0117
+Update100 - 0.0525
+Main Sequence Done - 0.0143
+Idle step - 0.0142
+(Re)Start - 0.0148
+CollectBlocks - 0.0939
+FindConstructions - 2.6602
+ParseScreensINI - 0.1249
+ShowConnectionsAsText - 0.0711
+ShowConnectionsWithSprites - 0.2139
+Main Sequence Done - 0.0201
+Main Sequence Done - 0.017
+Update100 - 0.0518
+Main Sequence Done - 0.0129
+Idle step - 0.0143
+(Re)Start - 0.0154
+CollectBlocks - 0.0961
+FindConstructions - 2.408
+ParseScreensINI - 0.1284
+ShowConnectionsAsText - 0.0416
+ShowConnectionsWithSprites - 3.5325
+Main Sequence Done - 0.0146
+Main Sequence Done - 0.011
+Update100 - 0.0523
+Main Sequence Done - 0.0151
+Idle step - 0.0162
+(Re)Start - 0.0145
+CollectBlocks - 0.0932
+FindConstructions - 2.2282
+ParseScreensINI - 0.1233
+ShowConnectionsAsText - 0.0418
+ShowConnectionsWithSprites - 0.1977
+Main Sequence Done - 0.0132
+Main Sequence Done - 0.0112
+Update100 - 0.0594
+Main Sequence Done - 0.0148
+Idle step - 0.0135
+(Re)Start - 0.015
+CollectBlocks - 0.0935
+FindConstructions - 2.297
+ParseScreensINI - 0.1239
+ShowConnectionsAsText - 0.0405
+ShowConnectionsWithSprites - 0.199
+Main Sequence Done - 0.014
+Main Sequence Done - 0.0111
+Update100 - 0.0533
+Main Sequence Done - 0.0149
+Idle step - 0.0141
+(Re)Start - 0.0253
+CollectBlocks - 0.0917
+FindConstructions - 2.2472
+ParseScreensINI - 0.1233
+ShowConnectionsAsText - 0.0412
+ShowConnectionsWithSprites - 0.2002
+Main Sequence Done - 0.0166
+Main Sequence Done - 0.0124
+Update100 - 0.0532
+Main Sequence Done - 0.0147
+Idle step - 0.0141
+(Re)Start - 0.0223
+CollectBlocks - 0.0981
+FindConstructions - 2.709
+ParseScreensINI - 0.1262
+ShowConnectionsAsText - 0.0468
+ShowConnectionsWithSprites - 0.1998
+Main Sequence Done - 0.0153
+Main Sequence Done - 0.0121
+Update100 - 0.0551
+Main Sequence Done - 0.0148
+Idle step - 0.0141
+(Re)Start - 0.0152
+CollectBlocks - 0.0947
+FindConstructions - 2.2264
+ParseScreensINI - 0.124
+ShowConnectionsAsText - 0.0409
+ShowConnectionsWithSprites - 0.2656
+Main Sequence Done - 0.0143
+Main Sequence Done - 0.0114
+Update100 - 0.0532
+Main Sequence Done - 0.0148
+Idle step - 0.0151
+(Re)Start - 0.0173
+CollectBlocks - 0.0941
+FindConstructions - 2.3671
+ParseScreensINI - 0.1235
+ShowConnectionsAsText - 0.042
+ShowConnectionsWithSprites - 0.2205
+Main Sequence Done - 0.0142
+Main Sequence Done - 0.0123
+Update100 - 0.0523
+Main Sequence Done - 0.0134
+Idle step - 0.0141
+(Re)Start - 0.0144
+CollectBlocks - 0.0989
+FindConstructions - 2.2565
+ParseScreensINI - 0.1267
+ShowConnectionsAsText - 0.0526
+ShowConnectionsWithSprites - 0.2009
+Main Sequence Done - 0.0141
+Main Sequence Done - 0.0121
+Update100 - 0.0552
+Main Sequence Done - 0.0157
+Idle step - 0.0146
+(Re)Start - 0.0151
+CollectBlocks - 0.0995
+FindConstructions - 2.2778
+ParseScreensINI - 0.1308
+ShowConnectionsAsText - 0.0433
+ShowConnectionsWithSprites - 0.2075
+Main Sequence Done - 0.0154
+Main Sequence Done - 0.0128
+Update100 - 0.0541
+Main Sequence Done - 0.0147
+Idle step - 0.0145
+(Re)Start - 0.0158
+CollectBlocks - 0.094
+FindConstructions - 2.5349
+ParseScreensINI - 0.1245
+ShowConnectionsAsText - 0.0475
+ShowConnectionsWithSprites - 0.2046
+Main Sequence Done - 0.0152
+Main Sequence Done - 0.0139
+Update100 - 3.1734		<- 4 extra screens added
+Main Sequence Done - 0.0139
+Idle step - 0.0161
+(Re)Start - 0.0196
+CollectBlocks - 0.0964
+FindConstructions - 2.6121
+ParseScreensINI - 0.2018
+ShowConnectionsAsText - 0.0416
+ShowConnectionsWithSprites - 0.2692
+Main Sequence Done - 0.0148
+Main Sequence Done - 0.0121
+Update100 - 0.0532
+Main Sequence Done - 0.0136
+Idle step - 0.0138
+(Re)Start - 0.0151
+CollectBlocks - 0.097
+FindConstructions - 2.2647
+ParseScreensINI - 0.1615
+ShowConnectionsAsText - 0.0414
+ShowConnectionsWithSprites - 0.2673
+Main Sequence Done - 0.0159
+Main Sequence Done - 0.0124
+Update100 - 0.053
+Main Sequence Done - 0.0149
+Idle step - 0.0138
+(Re)Start - 0.0156
+CollectBlocks - 0.1055
+FindConstructions - 2.2228
+ParseScreensINI - 0.1877
+ShowConnectionsAsText - 0.0414
+ShowConnectionsWithSprites - 0.251
+Main Sequence Done - 0.0144
+Main Sequence Done - 0.0119
+Update100 - 0.0555
+Main Sequence Done - 0.0133
+Idle step - 0.0145
+(Re)Start - 0.0166
+CollectBlocks - 0.1077
+FindConstructions - 2.2195
+ParseScreensINI - 0.159
+ShowConnectionsAsText - 0.0415
+ShowConnectionsWithSprites - 0.2517
+Main Sequence Done - 0.0145
+Main Sequence Done - 0.0142
+Update100 - 0.0556
+Main Sequence Done - 0.0151
+Idle step - 0.0152
+(Re)Start - 0.016
+CollectBlocks - 0.1815
+FindConstructions - 2.2739
+ParseScreensINI - 0.1593
+ShowConnectionsAsText - 0.0392
+ShowConnectionsWithSprites - 0.2464
+Main Sequence Done - 0.0147
+Main Sequence Done - 0.0119
+Update100 - 0.0544
+Main Sequence Done - 0.0135
+Idle step - 0.0157
+(Re)Start - 0.0151
+CollectBlocks - 0.0968
+FindConstructions - 2.2257
+ParseScreensINI - 0.1592
+ShowConnectionsAsText - 0.0401
+ShowConnectionsWithSprites - 0.3391
+Main Sequence Done - 0.0144
+Main Sequence Done - 0.0125
+Update100 - 0.0549
+Main Sequence Done - 0.0151
+Idle step - 0.0149
+(Re)Start - 0.0164
+CollectBlocks - 0.1171
+FindConstructions - 2.4519
+ParseScreensINI - 0.1635
+ShowConnectionsAsText - 0.0444
+ShowConnectionsWithSprites - 0.2675
+Main Sequence Done - 0.0146
+Main Sequence Done - 0.012
+Update100 - 0.0568
+Main Sequence Done - 0.0144
+Idle step - 0.0144
+(Re)Start - 0.015
+CollectBlocks - 0.1
+FindConstructions - 2.3381
+ParseScreensINI - 0.1655
+ShowConnectionsAsText - 0.044
+ShowConnectionsWithSprites - 0.2765
+Main Sequence Done - 0.0147
+Main Sequence Done - 0.0114
+Update100 - 0.0554
+Main Sequence Done - 0.0142
+Idle step - 0.0135
+(Re)Start - 0.0151
+CollectBlocks - 0.0983
+FindConstructions - 2.2413
+ParseScreensINI - 0.1621
+ShowConnectionsAsText - 0.0442
+ShowConnectionsWithSprites - 0.25
+Main Sequence Done - 0.0136
+Main Sequence Done - 0.0113
+Update100 - 0.056
+Main Sequence Done - 0.014
+Idle step - 0.0148
+(Re)Start - 0.0149
+CollectBlocks - 0.1101
+FindConstructions - 2.2803
+ParseScreensINI - 0.1665
+ShowConnectionsAsText - 0.044
+ShowConnectionsWithSprites - 0.2541
+Main Sequence Done - 0.0141
+Main Sequence Done - 0.0116
+Update100 - 0.0548
+Main Sequence Done - 0.014
+Idle step - 0.0141
+(Re)Start - 0.0146
+CollectBlocks - 0.1002
+FindConstructions - 2.2264
+ParseScreensINI - 0.1593
+ShowConnectionsAsText - 0.0403
+ShowConnectionsWithSprites - 0.2506
+Main Sequence Done - 0.0139
+Main Sequence Done - 0.0121
+Update100 - 0.0544
+Main Sequence Done - 0.0136
+Idle step - 0.0135
+(Re)Start - 0.0151
+CollectBlocks - 0.0967
+FindConstructions - 2.2832
+ParseScreensINI - 0.174
+ShowConnectionsAsText - 0.0411
+ShowConnectionsWithSprites - 0.2521
+Main Sequence Done - 0.0133
+Main Sequence Done - 0.0128
+Update100 - 0.0584
+Main Sequence Done - 0.0144
+Idle step - 0.0133
+(Re)Start - 0.0145
+CollectBlocks - 0.114
+FindConstructions - 2.2401
+ParseScreensINI - 0.1594
+ShowConnectionsAsText - 0.0429
+ShowConnectionsWithSprites - 0.2593
+Main Sequence Done - 0.0141
+Main Sequence Done - 0.0119
+Update100 - 0.056
+Main Sequence Done - 0.0141
+Idle step - 0.0152
+(Re)Start - 0.0148
+CollectBlocks - 0.0964
+FindConstructions - 2.2164
+ParseScreensINI - 0.1681
+ShowConnectionsAsText - 0.0379
+ShowConnectionsWithSprites - 0.2443
+Main Sequence Done - 0.0148
+Main Sequence Done - 0.0118

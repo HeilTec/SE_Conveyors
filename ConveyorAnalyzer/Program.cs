@@ -26,7 +26,7 @@ namespace IngameScript
         private const string SCRIPT_VERSION = "1.0";
         private const string LCD_TAG = "Conveyors LCD";
         private const string DEBUG_RUNTIME_TAG = "Runtime";
-        
+
         private const string DEFAULT_HIGHLIGHT_COLOR = "FF4500";
 
         private const string INI_SECTION = "Conveyor";
@@ -45,16 +45,16 @@ namespace IngameScript
         private readonly List<IMyTerminalBlock> _providers = new List<IMyTerminalBlock>();
         private readonly List<IMyTextPanel> _taggedLCDs = new List<IMyTextPanel>();
         private readonly List<IMyTextPanel> _runtimeLCDs = new List<IMyTextPanel>();
-        
+
         private readonly StringBuilder _outputText = new StringBuilder();
         internal readonly StringBuilder _echoText = new StringBuilder();
         internal readonly StringBuilder _runtimeStats = new StringBuilder();
 
-        private readonly List<IMyTerminalBlock> _allInventoryBlocks = new List<IMyTerminalBlock>();
-        private readonly List<IMyShipConnector> _localConnectors = new List<IMyShipConnector>();
-        private readonly List<IMyShipConnector> _allConnectors = new List<IMyShipConnector>();
-        private readonly List<Construct> _constructs = new List<Construct>();
-        
+        private readonly List<IMyTerminalBlock> _allInventoryBlocks = new List<IMyTerminalBlock>(64);
+        private readonly List<IMyShipConnector> _allConnectors = new List<IMyShipConnector>(16);
+        private readonly List<IMyShipConnector> _localConnectors = new List<IMyShipConnector>(8);
+        private readonly List<Construct> _constructs = new List<Construct>(8);
+
         private static int _totalIslands = 0;
         private static int _totalSegments = 0;
         private static readonly MyItemType _largeItem = MyItemType.MakeComponent("LargeTube");
@@ -68,31 +68,34 @@ namespace IngameScript
         private static readonly Queue _islandListQueue = new Queue(); // List<Island>
         private static readonly Queue _segmentListQueue = new Queue(); // List<Segment>
         private static readonly Queue _BlockListQueue = new Queue(); // List<IMyTerminaBlock>
+
         private IEnumerator<double> _mainSequenceSM = null;
         private string currentMainStep = "(Re)Compile";
 
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update100;
-            _runtimeStats.Append("Runtime Statistics:\n");
+            _runtimeStats.Append("Runtime Statistics:\n").Append(currentMainStep);
         }
 
         public void Main(string argument, UpdateType updateSource)
         {
-            switch (argument.ToLowerInvariant())
+            if ((updateSource & (UpdateType.Terminal | UpdateType.Trigger)) != 0)
+                switch (argument.ToLowerInvariant())
+                {
+                    case "scan":
+                        break;
+                    case "reset":
+                        _runtimeStats.Clear();
+                        _runtimeStats.Append("Runtime Statistics:\n");
+                        break;
+                    default:
+                        break;
+                }
+            if ((updateSource & UpdateType.Once) != 0)
             {
-                case "scan":
-                    break;
-                case "reset":
-                    _runtimeStats.Clear();
-                    _runtimeStats.Append("Runtime Statistics:\n");
-                    break;
-                default:
-                    break;
-            }
-            if ((updateSource & UpdateType.Once) != 0) {
                 Step();
-                _runtimeStats.Append($"{currentMainStep} - {Runtime.LastRunTimeMs}\n");
+                _runtimeStats.Append($"{Runtime.LastRunTimeMs}\n{currentMainStep} - ");
             }
             if ((updateSource & UpdateType.Update100) != 0)
             {
@@ -100,12 +103,13 @@ namespace IngameScript
                 _mainSequenceSM = MainSequence();
                 Runtime.UpdateFrequency |= UpdateFrequency.Once;
 
+                _runtimeStats.Append($"{Runtime.LastRunTimeMs}\n");
                 foreach (var _runtimeLCD in _runtimeLCDs)
                 {
                     _runtimeLCD.ContentType = ContentType.TEXT_AND_IMAGE;
                     _runtimeLCD.WriteText(_runtimeStats);
                 }
-                //Me.CustomData = $"{Me.CustomData}\n{ Runtime.LastRunTimeMs } ms";
+                _runtimeStats.Append($"{updateSource} - ");
                 Echo(_echoText.ToString());
             }
         }
@@ -153,15 +157,17 @@ namespace IngameScript
             currentMainStep = "ShowConnectionsWithSprites";
             ShowConnectionsWithSprites();
             _echoText.AppendLine($"{ Runtime.CurrentInstructionCount } instructions after Sprite display");
+            _echoText.AppendLine($"{ Runtime.MaxInstructionCount } Runtime.MaxInstructionCount");
             yield return 1;
 
             currentMainStep = "Main Sequence Done";
+            yield return 1;
 
         }
 
         private void Step()
         {
-            if(_mainSequenceSM != null)
+            if (_mainSequenceSM != null)
             {
                 try
                 {
@@ -178,7 +184,7 @@ namespace IngameScript
                 }
                 catch (Exception e)
                 {
-                    _echoText.AppendLine($"*** Exception ***\n{e}");
+                    _runtimeStats.AppendLine($"*** Exception ***\n{e}");
                     //throw;
                 }
             }
@@ -204,8 +210,8 @@ namespace IngameScript
                 }
 
                 IMyTextSurfaceProvider provider = block as IMyTextSurfaceProvider;
-                if (provider != null && 
-                    provider.SurfaceCount > 0 && 
+                if (provider != null &&
+                    provider.SurfaceCount > 0 &&
                     block.IsSameConstructAs(Me) &&
                     block != Me)
                 {
@@ -253,7 +259,7 @@ namespace IngameScript
             bool showAll = _ini.Get(section, INI_KEY_SHOW_ALL).ToBoolean();
             string connectorName = _ini.Get(section, INI_KEY_VIA).ToString();
             IMyShipConnector viaConnector = null;
-            if(connectorName != "")
+            if (connectorName != "")
             {
                 viaConnector = _localConnectors.Find(con => con.DisplayNameText.Contains(connectorName));
                 if (viaConnector == null) _echoText.AppendLine($"** WARNING ** '{connectorName}' not found. Full list displayed.");
@@ -274,7 +280,7 @@ namespace IngameScript
             if (!success)
             {
                 _echoText.AppendLine($"Warning: Failed to parse custom data in {block.DisplayNameText}");
-                return true; 
+                return true;
             }
             _ini.GetSections(_sectionNames);
             foreach (var section in _sectionNames)
@@ -490,7 +496,7 @@ namespace IngameScript
             _outputText.Append("List of constructions:\n---------------------\n");
             _outputText.AppendLine();
 
-            foreach (var construct in   _constructs)
+            foreach (var construct in _constructs)
             {
                 _outputText.Append("Grid: ");
                 IMyCubeGrid thisGrid = construct.Islands[0].Segments[0].Blocks[0].CubeGrid;

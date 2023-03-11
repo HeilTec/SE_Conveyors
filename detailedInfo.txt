@@ -1,0 +1,12 @@
+Conveyor Analyzer 1.0
+188 instructions after CollectBlocks
+61 Inventory Blocks
+1594 instructions after FindConstructions
+3 Constructs
+4 Islands
+28 Segments
+108 instructions after ParseScreensINI
+10 Screens found
+102 instructions after Text display
+3966 instructions after Sprite display
+50000 Runtime.MaxInstructionCount
