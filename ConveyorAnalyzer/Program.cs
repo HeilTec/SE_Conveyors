@@ -70,12 +70,22 @@ namespace IngameScript
         private static readonly Queue _BlockListQueue = new Queue(); // List<IMyTerminaBlock>
 
         private IEnumerator<double> _mainSequenceSM = null;
+        private IEnumerator<double> _findConstructsSM = null;
         private string currentMainStep = "(Re)Compile";
-
+        double currentProgress = 0f;
+        readonly IMyTextSurface _progressDisplay = null;
+        RectangleF _progressViewport;
         public Program()
         {
-            Runtime.UpdateFrequency = UpdateFrequency.Update100;
+            Runtime.UpdateFrequency = UpdateFrequency.Update100 | UpdateFrequency.Update10;
             _runtimeStats.Append("Runtime Statistics:\n").Append(currentMainStep);
+            _progressDisplay = Me.GetSurface(1);
+            _progressDisplay.ContentType = ContentType.SCRIPT;
+            _progressDisplay.Script = "";
+            Vector2 padding = _progressDisplay.TextureSize * (_progressDisplay.TextPadding / 20);
+            _progressViewport = new RectangleF(
+                ((_progressDisplay.TextureSize - _progressDisplay.SurfaceSize) / 2f) + padding,
+                _progressDisplay.SurfaceSize - (2 * padding));
         }
 
         public void Main(string argument, UpdateType updateSource)
@@ -97,6 +107,10 @@ namespace IngameScript
                 Step();
                 _runtimeStats.Append($"{Runtime.LastRunTimeMs}\n{currentMainStep} - ");
             }
+            if ((updateSource & UpdateType.Update10) != 0)
+            {
+                ShowProgress();
+            }
             if ((updateSource & UpdateType.Update100) != 0)
             {
                 if (_mainSequenceSM != null) return;
@@ -116,53 +130,50 @@ namespace IngameScript
 
         private IEnumerator<double> MainSequence()
         {
-            yield return 1;
-
-            currentMainStep = "Idle step";
-            yield return 1;
-
             currentMainStep = "(Re)Start";
             var start = Runtime.CurrentInstructionCount;
             _echoText.Clear();
             _totalIslands = 0;
             _totalSegments = 0;
             _echoText.AppendLine($"{SCRIPT_NAME} {SCRIPT_VERSION}");
-            yield return 1;
+            yield return 0.01;
 
-            currentMainStep = "CollectBlocks";
             CollectBlocks();
-            _echoText.AppendLine($"{ Runtime.CurrentInstructionCount } instructions after CollectBlocks");
-            _echoText.AppendLine($"{_allInventoryBlocks.Count} Inventory Blocks");
-            yield return 1;
+            yield return 0.02;
 
             currentMainStep = "FindConstructions";
-            FindConstructions();
-            _echoText.AppendLine($"{ Runtime.CurrentInstructionCount } instructions after FindConstructions");
+            _findConstructsSM = FindConstructions();
+            while (_findConstructsSM.MoveNext())
+                yield return 0.75 * _findConstructsSM.Current + 0.02;
+            _findConstructsSM.Dispose();
+
             _echoText.AppendLine($"{_constructs.Count} Constructs");
             _echoText.AppendLine($"{_totalIslands} Islands");
             _echoText.AppendLine($"{_totalSegments} Segments");
-            yield return 1;
+            yield return 0.77;
 
             currentMainStep = "ParseScreensINI";
             ParseScreensINI();
             _echoText.AppendLine($"{ Runtime.CurrentInstructionCount } instructions after ParseScreensINI");
             _echoText.AppendLine($"{_screens.Count} Screens found");
-            yield return 1;
+            yield return 0.8;
 
             currentMainStep = "ShowConnectionsAsText";
             ShowConnectionsAsText();
             _echoText.AppendLine($"{ Runtime.CurrentInstructionCount } instructions after Text display");
-            yield return 1;
+            yield return 0.81;
 
             currentMainStep = "ShowConnectionsWithSprites";
-            ShowConnectionsWithSprites();
+            int screenCount = _screens.Count;
+            for (int screenIndex = 0; screenIndex < screenCount; screenIndex++)
+            {
+                InventoryAnalysisDisplay display = _screens[screenIndex];
+                display.Render(_constructs);
+                yield return 0.81 + 0.19 * screenIndex / screenCount;
+            }
             _echoText.AppendLine($"{ Runtime.CurrentInstructionCount } instructions after Sprite display");
             _echoText.AppendLine($"{ Runtime.MaxInstructionCount } Runtime.MaxInstructionCount");
-            yield return 1;
-
-            currentMainStep = "Main Sequence Done";
-            yield return 1;
-
+            yield return 1.0;
         }
 
         private void Step()
@@ -172,6 +183,7 @@ namespace IngameScript
                 try
                 {
                     var moreSteps = _mainSequenceSM.MoveNext();
+                    currentProgress = _mainSequenceSM.Current;
                     if (moreSteps)
                     {
                         Runtime.UpdateFrequency |= UpdateFrequency.Once;
@@ -190,8 +202,20 @@ namespace IngameScript
             }
         }
 
+        private void ShowProgress()
+        {
+            var frame = _progressDisplay.DrawFrame();
+            DrawStatusBar(frame, _progressViewport.Position, _progressViewport.Size, (float)currentProgress, Color.Black,
+                          Color.DarkGray, TextAlignment.LEFT);
+            frame.Dispose();
+        }
+
         private void CollectBlocks()
         {
+            currentMainStep = "CollectBlocks";
+            _echoText.AppendLine($"{ Runtime.CurrentInstructionCount } instructions after CollectBlocks");
+            _echoText.AppendLine($"{_allInventoryBlocks.Count} Inventory Blocks");
+
             _allInventoryBlocks.Clear();
             _localConnectors.Clear();
             _allConnectors.Clear();
@@ -466,12 +490,14 @@ namespace IngameScript
         /// <summary>
         /// constructs filled with all blocks from each construct
         /// </summary>
-        private void FindConstructions()
+        private IEnumerator<double> FindConstructions()
         {
             _constructs.Clear();
+            yield return 0.01;
 
-            foreach (var block in _allInventoryBlocks)
+            for (int blockIndex = 0; blockIndex < _allInventoryBlocks.Count; blockIndex++)
             {
+                IMyTerminalBlock block = _allInventoryBlocks[blockIndex];
                 if (!block.Closed)
                 {
                     var found = false;
@@ -486,6 +512,8 @@ namespace IngameScript
                     }
                     if (!found) _constructs.Add(new Construct(block));
                 }
+                if (blockIndex % 6 == 0)
+                    yield return (float)blockIndex / _allInventoryBlocks.Count;
             }
         }
 
@@ -532,6 +560,44 @@ namespace IngameScript
             {
                 display.Render(_constructs);
             }
+        }
+
+        /// <summary>
+        /// Draws a simple status bar with a varying fill proportion.
+        /// </summary>
+        /// <param name="frame">Frame to draw the sprite to</param>
+        /// <param name="position">Location of the center of the status bar</param>
+        /// <param name="size">Total size of the status bar</param>
+        /// <param name="fillProportion">Fill proportion of the status bar (0 to 1)</param>
+        /// <param name="backgroundColor">Bar background color</param>
+        /// <param name="fillColor">Bar fill color</param>
+        /// <param name="fillFrom">Direction bar fill will grow from</param>
+        void DrawStatusBar(MySpriteDrawFrame frame, Vector2 position, Vector2 size, float fillProportion, Color backgroundColor, Color fillColor, TextAlignment fillFrom)
+        {
+            fillProportion = MathHelper.Clamp(fillProportion, 0, 1);
+
+            var backgroundSprite = MySprite.CreateSprite("SquareSimple", position, size);
+            backgroundSprite.Color = backgroundColor;
+            frame.Add(backgroundSprite);
+
+            Vector2 fillSize = size * new Vector2(fillProportion, 1f);
+            Vector2 fillPosition;
+            switch (fillFrom)
+            {
+                default:
+                case TextAlignment.CENTER:
+                    fillPosition = position;
+                    break;
+                case TextAlignment.LEFT:
+                    fillPosition = position + new Vector2(-0.5f * (size.X - fillSize.X), 0);
+                    break;
+                case TextAlignment.RIGHT:
+                    fillPosition = position + new Vector2(0.5f * (size.X - fillSize.X), 0);
+                    break;
+            }
+            var fillSprite = MySprite.CreateSprite("SquareSimple", fillPosition, fillSize);
+            fillSprite.Color = fillColor;
+            frame.Add(fillSprite);
         }
     }
 }
